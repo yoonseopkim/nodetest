@@ -3,24 +3,7 @@
 <html>
 
 <body>
-    <video id="videoInput"></video>
-    <script>
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-        var constraints = { audio: false, video: true };
-
-        var video = document.getElementById("videoInput");
-
-        function successCallback(stream) {
-            video.srcObject = stream;
-            video.play();
-        }
-
-        function errorCallback(error) {
-            console.log(error);
-        }
-        navigator.getUserMedia(constraints, successCallback, errorCallback);
-    </script>
+    HI I'M JACOB!~~
 </body>
 
 </html>
