@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/git-branch: main # branch name 
+    argocd-image-updater.argoproj.io/myalias.force-update: "true"
+  name: argocd-test
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  
+spec:
+  destination:
+    namespace: default
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: ./manifest/ # git repo에 등록되어 있는 manifest 파일의 경로 
+    repoURL: 'git@github.com:Nunuscloud/argocd-test.git'
+    targetRevision: main
+    directory:
+      recurse: true
+
+  project: default
+  syncPolicy:
+    retry:
+      limit: 0
+      backoff:
+        duration: 5s
+        maxDuration: 5m0s
+        factor: 2
+    automated: # 자동 동기화 (기본적으로 실패한 시도를 5회 재시도하며 각 재시도 사이에는 다음과 같은 지연이 있음: 5s, 10s, 20s, 40s, 80s). 'retry' 필드로 제어됩니다.
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true # 해당 네임스페이스가 없을 시 네임스페이스 생성
+      - ApplyOutOfSyncOnly=true  # sync only out-of-sync resources.
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true # 다른 리소스가 배포되어 정상 상태가 되고 다른 모든 웨이브가 성공적으로 완료된 후 동기화 작업의 최종 암시적 웨이브로 리소스 정리
+      - Replace=true # 기본적으로 ArgoCD는 apply를 사용, 이 설정을 사용하면 replace, creat 명령을 사용
+   # managedNamespaceMetadata:
+     # labels: # 애플리케이션 네임스페이스에 설정할 라벨 
