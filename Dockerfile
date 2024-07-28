@@ -4,8 +4,8 @@ WORKDIR /home/
 
 COPY . .
 
-RUN npm i express
+WORKDIR /home/nodetest/
 
-EXPOSE 8080
+RUN npm i express
 
 CMD ["node", "index.js"]
